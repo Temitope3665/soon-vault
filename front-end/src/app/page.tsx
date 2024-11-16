@@ -1,10 +1,11 @@
+'use server';
 import { BriefcaseBusiness, ChartCandlestick, Tickets } from 'lucide-react';
-import Image from 'next/image';
+import IndividualInvestments from '@/components/investments';
 
-export default function Home() {
+export default async function Home() {
   return (
-    <div className="">
-      <div className="w-full grid grid-cols-3 gap-16">
+    <div className="space-y-8">
+      <div className="w-full grid grid-cols-3 gap-10">
         <div className="bg-grey300 rounded-lg px-4 py-2.5 space-y-4">
           <div className="flex space-x-2 items-center text-[#8F90AC]">
             <BriefcaseBusiness size={16} />
@@ -28,6 +29,8 @@ export default function Home() {
           <p className="font-semibold">$98,089.00</p>
         </div>
       </div>
+
+      <IndividualInvestments />
     </div>
   );
 }

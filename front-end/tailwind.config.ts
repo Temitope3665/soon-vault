@@ -16,6 +16,9 @@ const config: Config = {
         grey200: '#c3c3ec',
         teal500: '#27CAA3',
         grey300: '#3F4362',
+        popover: '#2D3351',
+        'popover-foreground': '#c3c3ec',
+        accent: '#67678A',
       },
 
       fontFamily: {

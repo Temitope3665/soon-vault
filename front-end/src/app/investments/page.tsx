@@ -1,3 +1,6 @@
-export default function Investments() {
-  return <p>Investments</p>;
+'use server';
+import IndividualInvestments from '@/components/investments';
+
+export default async function Investments() {
+  return <IndividualInvestments />;
 }

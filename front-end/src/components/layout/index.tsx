@@ -12,6 +12,7 @@ import ConnectButton from '../ConnectedButton';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+
   return (
     <div className="p-4 w-full">
       <div className="fixed z-10 w-[20%] bg-secondary h-[96vh] rounded-lg mb-4 p-6">
@@ -40,7 +41,8 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       </div>
       <div className="w-[78%] overflow-x-hidden ml-[22%] text-white px">
-        <div className="flex justify-end border-b border-b-[#8F90AC] pb-4">
+        <div className="flex justify-between border-b border-b-[#8F90AC] pb-4 items-center">
+          <p>{sidebarItems.find((each) => each.href === pathname)?.title}</p>
           <ConnectButton />
         </div>
         <div className="pt-4">{children}</div>
