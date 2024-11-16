@@ -19,6 +19,7 @@ const config: Config = {
         popover: '#2D3351',
         'popover-foreground': '#c3c3ec',
         accent: '#67678A',
+        input: '#67678A',
       },
 
       fontFamily: {

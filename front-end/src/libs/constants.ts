@@ -6,7 +6,7 @@ export const categories: string[] = [
   'Auto-Compounding',
   'Stablecoin',
   'Cross-Chain',
-  'Real-World Asset-Backed',
+  'R.W.A',
   'Governance Token',
 ];
 
