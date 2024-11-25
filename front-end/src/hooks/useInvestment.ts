@@ -18,7 +18,7 @@ export interface INewInvestment {
 
 export default function useInvestments() {
   const { connection } = useConnection();
-  const { publicKey, connected, connecting } = useWallet();
+  const { publicKey, connected } = useWallet();
   const anchorWallet = useAnchorWallet();
 
   const [openInvestmentDialog, setOpenInvestmentDialog] = useState<boolean>(false);
@@ -127,8 +127,8 @@ export default function useInvestments() {
           .accounts({ user: userPda, investment: investmentPda, authority: publicKey, systemProgram: SystemProgram.programId })
           .rpc();
 
-        await confirmTx(txHash, connection);
         setOpenInvestmentDialog(false);
+        await confirmTx(txHash, connection);
         setNewInvestment(DEFAULT_INVESTMENT);
         toast.success('Successfully created an investment');
       } catch (error: any) {
@@ -174,6 +174,10 @@ export default function useInvestments() {
     }
   };
 
+  // { name: 'investment', isMut: true, isSigner: false },
+  // { name: 'ticket', isMut: false, isSigner: false },
+  // { name: 'authority', isMut: true, isSigner: true },
+  // { name: 'systemProgram', isMut: false, isSigner: false },
   const claimInvestmentFunds = async (ticket: any, investment: any) => {
     if (program && publicKey) {
       try {
@@ -192,7 +196,6 @@ export default function useInvestments() {
           .accounts({
             investment: investmentPda,
             ticket: ticketPda,
-            user: userPda,
             authority: publicKey,
             systemProgram: SystemProgram.programId,
           })

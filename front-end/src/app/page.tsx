@@ -58,7 +58,7 @@ export default function Home() {
 
           <Dialog open={openInvestmentDialog} onOpenChange={setOpenInvestmentDialog}>
             <DialogTrigger asChild>
-              <Button>Generate strategies</Button>
+              <Button disabled={investments.length === 0}>Generate strategies</Button>
             </DialogTrigger>
             <DialogContent className="max-w-[50%] max-h-[90vh] overflow-y-auto">
               <DialogHeader>

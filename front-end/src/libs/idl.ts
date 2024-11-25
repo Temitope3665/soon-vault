@@ -45,7 +45,6 @@ export const IDL: any = {
       accounts: [
         { name: 'investment', isMut: true, isSigner: false },
         { name: 'ticket', isMut: false, isSigner: false },
-        { name: 'user', isMut: true, isSigner: false },
         { name: 'authority', isMut: true, isSigner: true },
         { name: 'systemProgram', isMut: false, isSigner: false },
       ],
