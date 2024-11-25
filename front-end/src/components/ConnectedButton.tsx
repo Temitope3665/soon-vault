@@ -15,6 +15,11 @@ export default function ConnectButton() {
   };
   const { connected, disconnect, publicKey, connecting } = useWallet();
 
+  const handleDisconnect = async () => {
+    await disconnect();
+    window.location.reload();
+  };
+
   if (connected) {
     return (
       <DropdownMenu>
@@ -26,7 +31,7 @@ export default function ConnectButton() {
         <DropdownMenuContent className="absolute right-0 z-50 w-48 mt-2 origin-top-right bg-white border border-gray-300 rounded-md shadow-lg outline-none">
           <DropdownMenuLabel className="px-4 py-2 text-gray-700">{formatAddress(publicKey?.toBase58() || '')}</DropdownMenuLabel>
           <DropdownMenuSeparator className="border-t border-gray-300" />
-          <DropdownMenuItem className="cursor-pointer px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={disconnect}>
+          <DropdownMenuItem className="cursor-pointer px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={handleDisconnect}>
             Disconnect
           </DropdownMenuItem>
         </DropdownMenuContent>

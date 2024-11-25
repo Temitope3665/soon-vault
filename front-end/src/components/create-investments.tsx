@@ -20,8 +20,6 @@ export default function CreateInvestments() {
     }
   };
 
-  console.log(newInvestment, '-nov');
-
   return (
     <div className="space-y-4">
       <p className="text-[#8F90AC]">Today's prices by market cap</p>

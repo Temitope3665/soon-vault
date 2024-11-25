@@ -1,109 +1,75 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/libs/utils';
-import { ExternalLink, Plus } from 'lucide-react';
-import Image from 'next/image';
-import { useState } from 'react';
+import InvestmentCard from '@/components/investment-card';
+import { DashboardLoading } from '@/components/loading';
+import EmptyData from '@/components/ui/empty-placeholder';
+import useInvestments from '@/hooks/useInvestment';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { BriefcaseBusiness, ChartCandlestick, Tickets } from 'lucide-react';
+import React from 'react';
 
 export default function Portfolio() {
-  const [open, setOpen] = useState<boolean>(false);
+  const { initialized, user, userHoldings, transactionPending, loading } = useInvestments();
+
+  const portfolio = initialized && user ? Number(user.totalReturns) + Number(user.totalInvestments) : 0;
+
+  if (transactionPending || loading) {
+    return <DashboardLoading />;
+  }
   return (
     <div className="space-y-8">
-      <div className="bg-grey300 p-4 rounded-lg grid grid-cols-4">
-        <div className="space-y-2 b">
-          <p className="text-sm font-light text-[#8F90AC]">CURRENT BALANCE</p>
-          <p className="font-bold">$20,000</p>
+      <div className="w-full grid grid-cols-4 gap-10">
+        <div className="bg-grey300 rounded-lg px-4 py-2.5 space-y-4">
+          <div className="flex space-x-2 items-center text-[#8F90AC]">
+            <BriefcaseBusiness size={16} />
+            <p className="text-sm">Your Portfolio Value</p>
+          </div>
+          <p className="font-semibold">{(portfolio / LAMPORTS_PER_SOL).toFixed(3)} SOL</p>
         </div>
-        <div className="space-y-2">
-          <p className="text-sm font-light text-[#8F90AC]">ALL TIME PROFIT</p>
-          <p className="font-bold">2.5%</p>
+
+        <div className="bg-grey300 rounded-lg px-4 py-2.5 space-y-4">
+          <div className="flex space-x-2 items-center text-[#8F90AC]">
+            <ChartCandlestick size={16} />
+            <p className="text-sm text-[#8F90AC]">Total Investment</p>
+          </div>
+          <p className="font-semibold">{initialized && user ? (Number(user.totalInvestments) / LAMPORTS_PER_SOL).toFixed(3) : '0'} SOL</p>
         </div>
-        <div className="space-y-2">
-          <p className="text-sm font-light text-[#8F90AC]">BEST PERFORMER</p>
-          <p className="font-bold">12.5%</p>
+        <div className="bg-grey300 rounded-lg px-4 py-2.5 space-y-4">
+          <div className="flex space-x-2 items-center text-[#8F90AC]">
+            <Tickets size={16} />
+            <p className="text-sm text-[#8F90AC]">Aggregated Yield Perfomance</p>
+          </div>
+          <p className="font-semibold">
+            {initialized && user ? (Number(user.totalReturns) + Number(user.totalInvestments) / LAMPORTS_PER_SOL).toFixed(3) : '0'} SOL
+          </p>
         </div>
-        <div className="space-y-2">
-          <p className="text-sm font-light text-[#8F90AC]">WORST PERFORMER</p>
-          <p className="text-red-600 font-bold">12.5%</p>
+        <div className="bg-grey300 rounded-lg px-4 py-2.5 space-y-4">
+          <div className="flex space-x-2 items-center text-[#8F90AC]">
+            <Tickets size={16} />
+            <p className="text-sm text-[#8F90AC]">Number of Times Deposited</p>
+          </div>
+          <p className="font-semibold">{initialized && user ? user.numberOfDepositedTimes : '0'}</p>
         </div>
       </div>
 
       <div className="w-[100%] space-y-4">
         <h1 className="font-bold text-xl">Your Holdings</h1>
 
-        {/* <div className="flex space-x-4"> */}
-        <div className="bg-grey300 p-4 rounded-lg space-y-8">
-          <div className={cn('flex space-x-6 items-center justify-between', open && 'border-b-grey border-b pb-4')}>
-            <div className="flex space-x-12">
-              <div className="flex">
-                <Image src="/eth.png" alt="eth" width={24} height={24} className="" />
-                <Image src="/usdc.png" alt="usdc" width={24} height={24} className="-ml-2" />
-              </div>
-              <p>ETH.USDC</p>
-            </div>
-
-            <Button onClick={() => setOpen((prev) => !prev)}>See details</Button>
-          </div>
-
-          {open && (
-            <div className="space-y-12">
-              <div className="grid grid-cols-2 text-sm gap-12">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2">
-                    <p className="text-[#8F90AC]">APY</p>
-                    <p className="font-bold">32.04%</p>
-                  </div>
-                  <div className="grid grid-cols-2">
-                    <p className="text-[#8F90AC]">Asset</p>
-                    <p className="">fUNIV3_USDC_ETH</p>
-                  </div>
-                  <div className="grid grid-cols-2">
-                    <p className="text-[#8F90AC]">Pool</p>
-                    <p className="">Sushiswap</p>
-                  </div>
-                  <div className="grid grid-cols-2">
-                    <p className="text-[#8F90AC]">Balance</p>
-                    <p className="">0.00</p>
-                  </div>
-                  <div className="grid grid-cols-2">
-                    <p className="text-[#8F90AC]">Staked</p>
-                    <p className="">12.4524</p>
-                  </div>
-                </div>
-                <div className="space-y-12">
-                  <div className="space-y-3">
-                    <p className="text-[#8F90AC]">Total USD Value</p>
-                    <p className="font-bold text-xl">$20,005.00</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <p className="text-[#8F90AC]">Assets</p>
-                      <p className="">$2,005.53</p>
-                    </div>
-                    <div className="space-y-4">
-                      <p className="text-[#8F90AC]">Rewards</p>
-                      <p className="">$0.03</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex space-x-4">
-                <Button className="flex" variant="outline">
-                  <Plus size={20} /> <p>Add fund</p>
-                </Button>
-                <Button className="flex">
-                  <ExternalLink size={20} /> <p>Claim</p>
-                </Button>
-              </div>
+        <React.Fragment>
+          {userHoldings.length === 0 ? (
+            <EmptyData
+              className="mt-24"
+              title="You have no holdings currently"
+              description="Unfortunately, you have no holdings to your wallet at the moment"
+            />
+          ) : (
+            <div className="w-full grid grid-cols-2 gap-6">
+              {userHoldings.map((each: any) => (
+                <InvestmentCard key={each.account.id} each={each} hasClaim />
+              ))}
             </div>
           )}
-        </div>
-
-        {/* <div className="border border-grey300 p-3 rounded-lg">
-            <p className="text-sm font-light text-[#8F90AC]">REWARDS</p>
-          </div> */}
+        </React.Fragment>
       </div>
-      {/* </div> */}
     </div>
   );
 }

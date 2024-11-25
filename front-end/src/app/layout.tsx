@@ -6,7 +6,6 @@ import localFont from 'next/font/local';
 import ToastProvider from './providers/ToastProvider';
 import { Metadata } from 'next';
 import { cn } from '@/libs/utils';
-// import AppProvider from './providers/AppProvider';
 
 const satoshi = localFont({
   variable: '--font-sans',
@@ -68,9 +67,7 @@ export default function RootLayout({
       <body className={cn('font-sans', satoshi.variable)}>
         <Providers>
           <ToastProvider>
-            {/* <AppProvider> */}
             <Layout>{children}</Layout>
-            {/* </AppProvider> */}
           </ToastProvider>
         </Providers>
       </body>

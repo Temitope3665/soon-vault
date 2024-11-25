@@ -19,4 +19,4 @@ export const SOL_RATE = 0.27;
 export const USER_SEED = 'user';
 export const INVESTMENT_SEED = 'investment';
 export const TICKET_SEED = 'ticket';
-export const PROGRAM_ID = new PublicKey('F8iByX1eTLsMv9QJEkSsADS24mtCX3RLSEmQBL3i4r4M');
+export const PROGRAM_ID = new PublicKey('E6U7UzwvWfBRG6kwiNqCCBFYqx4nLN5W2UN6aoRs7qpw');

@@ -1,8 +1,6 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import Navbar from '../Navbar';
-import Hero from '../hero';
 import Image from 'next/image';
 import { HOME_URL, INVESTMENTS, PORTFOLIO_URL, REWARD_AND_EARNINGS_URL, TRANSACTIONS_URL } from '@/config/routes';
 import { ArrowRightLeft, BriefcaseBusiness, ChartCandlestick, Coins, LayoutDashboard, Loader } from 'lucide-react';
@@ -77,7 +75,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 export const sidebarItems = [
   {
-    title: 'Home',
+    title: 'Dashboard',
     icon: <LayoutDashboard size={20} />,
     href: HOME_URL,
     isComingSoon: false,

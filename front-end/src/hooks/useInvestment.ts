@@ -1,15 +1,15 @@
 import * as anchor from '@project-serum/anchor';
-import { DEFAULT_INVESTMENT, INVESTMENT_SEED, PROGRAM_ID, USER_SEED } from '@/libs/constants';
+import { DEFAULT_INVESTMENT, INVESTMENT_SEED, PROGRAM_ID, TICKET_SEED, USER_SEED } from '@/libs/constants';
 import { IDL as investmentIDL } from '@/libs/idl';
 import { LAMPORTS_PER_SOL, SystemProgram } from '@solana/web3.js';
 import { bs58, utf8 } from '@project-serum/anchor/dist/cjs/utils/bytes';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { useWallet, useConnection, useAnchorWallet } from '@solana/wallet-adapter-react';
 import { useEffect, useMemo, useState } from 'react';
-import { addAPY, authorFilter, confirmTx, getUserAddress } from '@/libs/utils';
+import { addAPY, authorFilter, confirmTx, findMatches, getUserAddress } from '@/libs/utils';
 import { toast } from 'react-toastify';
 
-interface INewInvestment {
+export interface INewInvestment {
   investmentAmount: string;
   investmentType: string;
   duration: string;
@@ -18,23 +18,20 @@ interface INewInvestment {
 
 export default function useInvestments() {
   const { connection } = useConnection();
-  const [userAddress, setUserAddress] = useState<any>();
   const { publicKey, connected, connecting } = useWallet();
   const anchorWallet = useAnchorWallet();
 
   const [openInvestmentDialog, setOpenInvestmentDialog] = useState<boolean>(false);
   const [initialized, setInitialized] = useState(false);
   const [newInvestment, setNewInvestment] = useState<INewInvestment>(DEFAULT_INVESTMENT);
-  const [lastDeposited, setLastDeposited] = useState(0);
   const [investments, setInvestments] = useState<any>([]);
+  const [tickets, setTickets] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [transactionPending, setTransactionPending] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [userHoldings, setUserHoldings] = useState<any[]>([]);
 
-  console.log(initialized, '-> user');
-  // console.log(user?.totalAssets?.toString(), '-> user');
-
-  const program = useMemo(() => {
+  const program: any = useMemo(() => {
     if (anchorWallet) {
       const provider = new anchor.AnchorProvider(connection, anchorWallet, anchor.AnchorProvider.defaultOptions());
       return new anchor.Program(investmentIDL, PROGRAM_ID, provider);
@@ -47,10 +44,6 @@ export default function useInvestments() {
         try {
           setLoading(true);
           const [profilePda, profileBump] = await findProgramAddressSync([utf8.encode(USER_SEED), publicKey.toBuffer()], program.programId);
-          const [investmentPda, investmentBump] = findProgramAddressSync(
-            [utf8.encode(INVESTMENT_SEED), new anchor.BN(user?.lastId).toArrayLike(Buffer, 'le', 4)],
-            program.programId
-          );
 
           const userAccount: any = await program.account.user.fetch(profilePda);
 
@@ -65,16 +58,19 @@ export default function useInvestments() {
             });
 
             const investmentsA = await program.account.investment.all();
-            setInvestments(addAPY(investmentsA));
+            const updatedInvestments = addAPY(investmentsA);
+            setInvestments(updatedInvestments);
 
-            // const investments = await program.account.user.all([authorFilter(publicKey.toString())]);
-            // console.log(investments, 'ivaA');
+            const userTickets: any = await program.account.ticket.all();
+            const currentUserTickets = userTickets.filter((each: any) => each.account.authority.toString() === anchorWallet?.publicKey.toString());
+            setTickets(userTickets);
+
+            const userInvestments = findMatches(currentUserTickets, updatedInvestments);
+            setUserHoldings(userInvestments);
           } else {
-            console.log('not yet initialized');
             setInitialized(false);
           }
         } catch (error) {
-          console.log(error, '-> error');
           setInitialized(false);
           setInvestments([]);
         } finally {
@@ -86,7 +82,6 @@ export default function useInvestments() {
     };
 
     findUserAccount();
-    // updateState();
   }, [publicKey, program, transactionPending]);
 
   const initializeUser = async () => {
@@ -106,7 +101,6 @@ export default function useInvestments() {
         setInitialized(true);
         toast.success('Successfully initialized user.');
       } catch (error: any) {
-        console.log(error);
         toast.error(error.toString());
       } finally {
         setTransactionPending(false);
@@ -134,12 +128,10 @@ export default function useInvestments() {
           .rpc();
 
         await confirmTx(txHash, connection);
-        console.log(txHash, '-> tx');
-        setNewInvestment(DEFAULT_INVESTMENT);
         setOpenInvestmentDialog(false);
+        setNewInvestment(DEFAULT_INVESTMENT);
         toast.success('Successfully created an investment');
       } catch (error: any) {
-        console.log(error);
         toast.error(error.toString());
       } finally {
         setTransactionPending(false);
@@ -147,12 +139,67 @@ export default function useInvestments() {
     }
   };
 
-  const buyInvestment = async () => {
+  const buyInvestment = async (investment: any, futureValue: number) => {
     if (program && publicKey) {
       try {
         setTransactionPending(true);
+        const [userPda, profileBump] = findProgramAddressSync([utf8.encode(USER_SEED), publicKey.toBuffer()], program.programId);
+        const [ticketPda, ticketBump] = findProgramAddressSync(
+          [
+            utf8.encode(TICKET_SEED),
+            investment.publicKey.toBuffer(),
+            new anchor.BN(investments[investments.length - 1].account.lastInvestmentId + 1).toArrayLike(Buffer, 'le', 4),
+          ],
+          program.programId
+        );
+        const [investmentPda, investmentBump] = findProgramAddressSync(
+          [utf8.encode(INVESTMENT_SEED), new anchor.BN(investment.account.id).toArrayLike(Buffer, 'le', 4)],
+          program.programId
+        );
+
+        const amount = new anchor.BN(Number(futureValue));
+
+        const txHash = await program.methods
+          .buyInvestment(investment.account.id, amount)
+          .accounts({ investment: investmentPda, ticket: ticketPda, investmentBuyer: publicKey, user: userPda, systemProgram: SystemProgram.programId })
+          .rpc();
+
+        await confirmTx(txHash, connection);
+        toast.success('Successfully purchased investment');
       } catch (error: any) {
-        console.log(error);
+        toast.error(error.toString());
+      } finally {
+        setTransactionPending(false);
+      }
+    }
+  };
+
+  const claimInvestmentFunds = async (ticket: any, investment: any) => {
+    if (program && publicKey) {
+      try {
+        setTransactionPending(true);
+        const [userPda, profileBump] = findProgramAddressSync([utf8.encode(USER_SEED), publicKey.toBuffer()], program.programId);
+        const [investmentPda, investmentBump] = findProgramAddressSync(
+          [utf8.encode(INVESTMENT_SEED), new anchor.BN(investment.account.id).toArrayLike(Buffer, 'le', 4)],
+          program.programId
+        );
+        const [ticketPda, ticketBump] = findProgramAddressSync(
+          [utf8.encode(TICKET_SEED), investment.publicKey.toBuffer(), new anchor.BN(ticket.account.id).toArrayLike(Buffer, 'le', 4)],
+          program.programId
+        );
+        const txHash = await program.methods
+          .withdrawInvestment(investment.account.id, ticket.account.id)
+          .accounts({
+            investment: investmentPda,
+            ticket: ticketPda,
+            user: userPda,
+            authority: publicKey,
+            systemProgram: SystemProgram.programId,
+          })
+          .rpc();
+        await confirmTx(txHash, connection);
+        toast.success('Investment successfully claimed!');
+      } catch (error: any) {
         toast.error(error.toString());
       } finally {
         setTransactionPending(false);
@@ -173,5 +220,9 @@ export default function useInvestments() {
     investments,
     setOpenInvestmentDialog,
     openInvestmentDialog,
+    buyInvestment,
+    tickets,
+    claimInvestmentFunds,
+    userHoldings,
   };
 }
