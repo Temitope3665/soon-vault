@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import useInvestments from '@/hooks/useInvestment';
 
-export default function IndividualInvestments() {
+export default function CreateInvestments() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedLevel, setSelectedLevel] = useState<string>('');
   const { transactionPending, initialized, createInvestment, setNewInvestment, newInvestment } = useInvestments();
@@ -24,14 +24,11 @@ export default function IndividualInvestments() {
 
   return (
     <div className="space-y-4">
-      <Button onClick={() => null} disabled={!initialized}>
-        {transactionPending ? 'Loading...' : 'Add investment'}
-      </Button>
       <p className="text-[#8F90AC]">Today's prices by market cap</p>
       <div className="bg-grey300 rounded-lg px-4 py-8 space-y-8">
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-medium">Select categories</h1>
+            <h1 className="text-2xl font-medium text-white">Select categories</h1>
             <Select
               disabled={!initialized}
               defaultValue={newInvestment.category}
@@ -49,13 +46,13 @@ export default function IndividualInvestments() {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-4 gap-4">
             {categories.map((each: string) => (
               <p
                 key={each}
                 className={cn(
                   'bg-secondary rounded-lg px-4 py-2.5 space-y-4 trans border border-secondary',
-                  each === selectedCategory ? 'bg-teal500 border-teal500' : 'hover:border-[#8F90AC]',
+                  each === selectedCategory ? 'bg-teal500 border-teal500 text-white' : 'hover:border-[#8F90AC]',
                   initialized ? 'cursor-pointer' : 'cursor-not-allowed hover:border-none'
                 )}
                 onClick={() => handleSelectCategory(each)}
@@ -67,14 +64,14 @@ export default function IndividualInvestments() {
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-2xl font-medium">Select Risk Level</h1>
-          <div className="grid grid-cols-8 gap-10">
+          <h1 className="text-2xl font-medium text-white">Select Risk Level</h1>
+          <div className="grid grid-cols-5 gap-10">
             {riskLevel.map((each, index) => (
               <p
                 key={each}
                 className={cn(
                   'bg-secondary rounded-lg px-4 py-2.5 space-y-4 trans border border-secondary',
-                  each === selectedLevel ? 'bg-teal500 border-teal500' : 'hover:border-[#8F90AC]',
+                  each === selectedLevel ? 'bg-teal500 border-teal500 text-white' : 'hover:border-[#8F90AC]',
                   initialized ? 'cursor-pointer' : 'cursor-not-allowed hover:border-none'
                 )}
                 onClick={() => setSelectedLevel(each)}
@@ -86,8 +83,8 @@ export default function IndividualInvestments() {
         </div>
 
         <div className="space-y-4">
-          <div className="w-1/2 space-y-4">
-            <h1 className="text-2xl font-medium">Initial Capital</h1>
+          <div className="w-full space-y-4">
+            <h1 className="text-2xl font-medium text-white">Initial Capital</h1>
             <div className="flex space-x-8 w-full">
               <div className="relative w-1/2 space-y-2">
                 <p className="text-sm text-grey200">Amount</p>
@@ -123,7 +120,7 @@ export default function IndividualInvestments() {
               </div>
             </div>
             <Button
-              className="w-[90%] h-12"
+              className="w-full h-12"
               disabled={
                 (!initialized && !newInvestment.category) || !newInvestment.duration || !newInvestment.investmentAmount || !newInvestment.investmentType
               }
@@ -131,9 +128,9 @@ export default function IndividualInvestments() {
               pendingText="Creating Investment..."
               onClick={createInvestment}
             >
-              Generate Strategies
+              Create
             </Button>
-            <p className="text-xs text-grey200">Note: It might take up to few mins to generate a strategy</p>
+            <p className="text-xs text-grey200">Note: It might take up to few mins to create a new investment</p>
           </div>
         </div>
       </div>

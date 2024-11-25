@@ -7,21 +7,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu';
+import { Button } from './ui/button';
 
 export default function ConnectButton() {
   const formatAddress = (address: string): string => {
     return `${address.slice(0, 4)}…${address.slice(address.length - 4, address.length)}`;
   };
-  const { connected, disconnect, publicKey } = useWallet();
+  const { connected, disconnect, publicKey, connecting } = useWallet();
 
   if (connected) {
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger
-          className="relative inline-flex items-center justify-center p-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal500"
-          asChild
-        >
-          <span>{formatAddress(publicKey?.toBase58() || '')}</span>
+        <DropdownMenuTrigger asChild>
+          <Button pending={connecting} pendingText="Connecting...">
+            <span>{formatAddress(publicKey?.toBase58() || '')}</span>
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="absolute right-0 z-50 w-48 mt-2 origin-top-right bg-white border border-gray-300 rounded-md shadow-lg outline-none">
           <DropdownMenuLabel className="px-4 py-2 text-gray-700">{formatAddress(publicKey?.toBase58() || '')}</DropdownMenuLabel>
