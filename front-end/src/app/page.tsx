@@ -41,7 +41,9 @@ export default function Home() {
             <Tickets size={16} />
             <p className="text-sm text-[#8F90AC]">Aggregated Yield Perfomance</p>
           </div>
-          <p className="font-semibold">{initialized && user ? (Number(user.totalReturns) / LAMPORTS_PER_SOL).toFixed(3) : '0'} SOL</p>
+          <p className="font-semibold">
+            {initialized && user ? (Number(user.totalReturns) + Number(user.totalInvestments) / LAMPORTS_PER_SOL).toFixed(3) : '0'} SOL
+          </p>
         </div>
         <div className="bg-grey300 rounded-lg px-4 py-2.5 space-y-4">
           <div className="flex space-x-2 items-center text-[#8F90AC]">
