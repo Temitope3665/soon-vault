@@ -6,7 +6,7 @@ import { bs58, utf8 } from '@project-serum/anchor/dist/cjs/utils/bytes';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { useWallet, useConnection, useAnchorWallet } from '@solana/wallet-adapter-react';
 import { useEffect, useMemo, useState } from 'react';
-import { addAPY, authorFilter, confirmTx, findMatches, getUserAddress } from '@/libs/utils';
+import { addAPY, confirmTx, findMatches } from '@/libs/utils';
 import { toast } from 'react-toastify';
 
 export interface INewInvestment {

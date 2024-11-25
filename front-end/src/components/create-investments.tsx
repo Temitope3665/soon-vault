@@ -22,7 +22,7 @@ export default function CreateInvestments() {
 
   return (
     <div className="space-y-4">
-      <p className="text-[#8F90AC]">Today's prices by market cap</p>
+      <p className="text-[#8F90AC]">Today&apos;s prices by market cap</p>
       <div className="bg-grey300 rounded-lg px-4 py-8 space-y-8">
         <div className="space-y-4">
           <div className="flex justify-between items-center">
@@ -66,7 +66,7 @@ export default function CreateInvestments() {
           <div className="grid grid-cols-5 gap-10">
             {riskLevel.map((each, index) => (
               <p
-                key={each}
+                key={each + index}
                 className={cn(
                   'bg-secondary rounded-lg px-4 py-2.5 space-y-4 trans border border-secondary',
                   each === selectedLevel ? 'bg-teal500 border-teal500 text-white' : 'hover:border-[#8F90AC]',

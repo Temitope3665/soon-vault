@@ -26,7 +26,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           {sidebarItems.map((each) => {
             const { title, href, icon, isComingSoon } = each;
             return (
-              <ul>
+              <ul key={title}>
                 <li className="flex space-x-4">
                   <a
                     href={isComingSoon ? '#' : href}
