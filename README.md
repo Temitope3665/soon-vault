@@ -1,11 +1,13 @@
-# Hello Word on SOON
+# SOON Hackathon Project 🚀
 
-This is a simple example of how to use the SOON Network to deploy a simple "Hello World" application.
+# SOONVault
+
+A yield aggregator that automatically finds and invests in the best yield opportunities across DeFi protocols on SOON. Offer users strategies to maximize returns with minimal risk.
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/en/)
-- [Yarn](https://yarnpkg.com/)
+- [Npm](https://docs.npmjs.com/cli/v6/commands/npm-install/)
 - [Rust](https://www.rust-lang.org/)
 - [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 
@@ -26,8 +28,8 @@ https://faucet.soo.network/
 1. Clone the repository
 
 ```bash
-git clone https://github.com/soonlabs/hello-world
-cd hello-world/example-hello-world
+git clone https://github.com/Temitope3665/yield-aggregator
+cd yield-aggregator
 ```
 
 2. Install the dependencies and build the project
@@ -46,29 +48,22 @@ solana config set --url https://rpc.devnet.soo.network/rpc
 5. Deploy the program to the SOON Network
 
 ```bash
-solana program deploy ./target/deploy/helloworld.so
+solana program deploy ./smart-contract/target/deploy/aggregator.so
 ```
 
 6. Once you have a deployed program, you can start interacting with it using the frontend, just cd to root directory and run the following commands:
 
 ```bash
 cd front-end
-pnpm i
-pnpm dev
+npm i
+npm dev
 ```
 
 7. Open your browser and navigate to http://localhost:3000/
-
-8. To run the backend, you can add your private-key and run the following commands:
-
-```bash
-cd back-end
-pnpm i
-pnpm start
 ```
 
 ### Note: You need to change the programId in the frontend/src/components/hero.tsx file to the programId of the deployed program.
 
 ## Acknowledgments
 
-This project is based on the [Solana Hello World example](https://github.com/solana-labs/example-helloworld/), and we would like to credit the Solana Labs team for providing the foundation for this implementation.
+This project is based on the [Solana Hello World example](https://github.com/Temitope3665/yield-aggregator/), and we would like to credit the Solana Labs team for providing the foundation for this implementation.
