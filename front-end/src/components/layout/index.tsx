@@ -30,7 +30,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Image src="/logo.svg" alt="logo" width={40} height={40} />
             <h1 className="text-xl font-light">SoonVault</h1>
           </div>
-          <X onClick={() => setShowNav(false)} />
+          <X onClick={() => setShowNav(false)} className="lg:hidden flex" />
         </div>
 
         <div className="mt-12 px-2 space-y-6">
@@ -63,7 +63,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <div className="lg:w-[78%] overflow-x-hidden lg:ml-[22%] text-white px">
         <div className="flex justify-between border-b border-b-[#8F90AC] pb-4 items-center">
           <div className="flex space-x-2 items-center">
-            <Menu className="cursor-pointer" onClick={() => setShowNav(true)} />
+            <Menu className="cursor-pointer lg:hidden flex" onClick={() => setShowNav(true)} />
             <p>{sidebarItems.find((each) => each.href === pathname)?.title}</p>
           </div>
           <div className="h-12">
