@@ -44,7 +44,7 @@ export default function CreateInvestments() {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {categories.map((each: string) => (
               <p
                 key={each}
@@ -63,7 +63,7 @@ export default function CreateInvestments() {
 
         <div className="space-y-4">
           <h1 className="text-2xl font-medium text-white">Select Risk Level</h1>
-          <div className="grid grid-cols-5 gap-10">
+          <div className="grid grid-cols-3 lg:grid-cols-5 gap-10">
             {riskLevel.map((each, index) => (
               <p
                 key={each + index}
@@ -126,7 +126,7 @@ export default function CreateInvestments() {
               pendingText="Creating Investment..."
               onClick={createInvestment}
             >
-              Create
+              Create Investment
             </Button>
             <p className="text-xs text-grey200">Note: It might take up to few mins to create a new investment</p>
           </div>

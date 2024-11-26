@@ -17,7 +17,7 @@ export default function Portfolio() {
   }
   return (
     <div className="space-y-8">
-      <div className="w-full grid grid-cols-4 gap-10">
+      <div className="w-full grid-cols-1 grid lg:grid-cols-4 gap-10">
         <div className="bg-grey300 rounded-lg px-4 py-2.5 space-y-4">
           <div className="flex space-x-2 items-center text-[#8F90AC]">
             <BriefcaseBusiness size={16} />
@@ -62,7 +62,7 @@ export default function Portfolio() {
               description="Unfortunately, you have no holdings to your wallet at the moment"
             />
           ) : (
-            <div className="w-full grid grid-cols-2 gap-6">
+            <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
               {userHoldings.map((each: any) => (
                 <InvestmentCard key={each.account.id} each={each} hasClaim />
               ))}

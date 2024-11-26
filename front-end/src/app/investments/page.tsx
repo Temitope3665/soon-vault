@@ -21,7 +21,7 @@ export default function Investments() {
           <DialogTrigger asChild>
             <Button>Add New Investment</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-[50%] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="lg:max-w-[50%] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-white">Add New Investment</DialogTitle>
             </DialogHeader>
@@ -39,7 +39,7 @@ export default function Investments() {
           {investments.length === 0 ? (
             <EmptyData className="mt-24" title="No Invesment Created Yet" description="Unfortunately, there is no investment to purchase for now" />
           ) : (
-            <div className="w-full grid grid-cols-2 gap-6">
+            <div className="w-full grid-cols-1 grid lg:grid-cols-2 gap-6">
               {investments.map((each: any) => (
                 <InvestmentCard key={each.account.id} each={each} />
               ))}

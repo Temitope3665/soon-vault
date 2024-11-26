@@ -1,9 +1,9 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import Image from 'next/image';
 import { HOME_URL, INVESTMENTS, PORTFOLIO_URL, REWARD_AND_EARNINGS_URL, TRANSACTIONS_URL } from '@/config/routes';
-import { ArrowRightLeft, BriefcaseBusiness, ChartCandlestick, Coins, LayoutDashboard, Loader } from 'lucide-react';
+import { ArrowRightLeft, BriefcaseBusiness, ChartCandlestick, Coins, LayoutDashboard, Loader, Menu, X } from 'lucide-react';
 import { cn } from '@/libs/utils';
 import { usePathname } from 'next/navigation';
 import ConnectButton from '../ConnectedButton';
@@ -11,15 +11,26 @@ import { Button } from '../ui/button';
 import useInvestments from '@/hooks/useInvestment';
 
 export default function Layout({ children }: { children: ReactNode }) {
+  const [showNav, setShowNav] = useState(false);
   const pathname = usePathname();
   const { initializeUser, transactionPending, connected, initialized, loading } = useInvestments();
 
   return (
     <div className="p-4 w-full">
-      <div className="fixed z-10 w-[20%] bg-secondary h-[96vh] rounded-lg mb-4 p-6">
-        <div className="flex items-center text-white space-x-2 my-4 h-12">
-          <Image src="/logo.svg" alt="logo" width={40} height={40} />
-          <h1 className="text-xl font-light">SoonVault</h1>
+      {showNav && <div className="inset-0 w-full bg-[#000000] opacity-50 h-[100%] ease-in-out duration-300 fixed z-50" onClick={() => setShowNav(false)}></div>}
+
+      <div
+        className={cn(
+          'fixed z-50 w-[70%] lg:w-[20%] bg-secondary h-[96vh] rounded-lg mb-4 p-6 ease-in-out duration-300',
+          showNav ? 'ml-2' : '-translate-x-[105%] lg:translate-x-0'
+        )}
+      >
+        <div className="flex items-center text-white space-x-2 my-4 h-12 justify-between">
+          <div className="flex space-x-2 items-center">
+            <Image src="/logo.svg" alt="logo" width={40} height={40} />
+            <h1 className="text-xl font-light">SoonVault</h1>
+          </div>
+          <X onClick={() => setShowNav(false)} />
         </div>
 
         <div className="mt-12 px-2 space-y-6">
@@ -49,9 +60,12 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       </div>
 
-      <div className="w-[78%] overflow-x-hidden ml-[22%] text-white px">
+      <div className="lg:w-[78%] overflow-x-hidden lg:ml-[22%] text-white px">
         <div className="flex justify-between border-b border-b-[#8F90AC] pb-4 items-center">
-          <p>{sidebarItems.find((each) => each.href === pathname)?.title}</p>
+          <div className="flex space-x-2 items-center">
+            <Menu className="cursor-pointer" onClick={() => setShowNav(true)} />
+            <p>{sidebarItems.find((each) => each.href === pathname)?.title}</p>
+          </div>
           <div className="h-12">
             {loading ? (
               <Loader className="mr-2 h-6 w-6 mt-2 animate-spin" />

@@ -119,7 +119,7 @@ export default function InvestmentCard({ each, hasClaim }: { each: any; hasClaim
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter className="flex">
-                    <Button variant="outline" onClick={() => setOpenDialog(false)}>
+                    <Button variant="outline" onClick={() => setOpenDialog(false)} className="lg:mt-0 mt-4">
                       Cancel
                     </Button>
                     <Button onClick={() => handleBuyInvestment(each, investmentReward)} pending={transactionPending} pendingText="Please wait...">

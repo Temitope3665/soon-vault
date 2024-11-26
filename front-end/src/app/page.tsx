@@ -20,7 +20,7 @@ export default function Home() {
 
   return (
     <div className="space-y-8">
-      <div className="w-full grid grid-cols-4 gap-10">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-10">
         <div className="bg-grey300 rounded-lg px-4 py-2.5 space-y-4">
           <div className="flex space-x-2 items-center text-[#8F90AC]">
             <BriefcaseBusiness size={16} />
@@ -62,7 +62,7 @@ export default function Home() {
             <DialogTrigger asChild>
               <Button disabled={investments.length === 0}>Generate strategies</Button>
             </DialogTrigger>
-            <DialogContent className="max-w-[50%] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-[90%] lg:max-w-[50%] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-white">Purchase Investment</DialogTitle>
               </DialogHeader>
@@ -75,7 +75,7 @@ export default function Home() {
         {investments.length === 0 ? (
           <EmptyData className="mt-24" title="No Invesment Created Yet" description="Unfortunately, there is no investment to purchase for now" />
         ) : (
-          <div className="w-full grid grid-cols-2 gap-6">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
             {investments.map((each: any) => (
               <InvestmentCard key={each.account.id} each={each} />
             ))}
