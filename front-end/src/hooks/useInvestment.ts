@@ -38,49 +38,49 @@ export default function useInvestments() {
     }
   }, [connection, anchorWallet]);
 
-  useEffect(() => {
-    const findUserAccount = async () => {
-      if (program && publicKey && !transactionPending) {
-        try {
-          setLoading(true);
-          const [profilePda, profileBump] = await findProgramAddressSync([utf8.encode(USER_SEED), publicKey.toBuffer()], program.programId);
+  const findUserAccount = async () => {
+    if (program && publicKey && !transactionPending) {
+      try {
+        setLoading(true);
+        const [profilePda, profileBump] = await findProgramAddressSync([utf8.encode(USER_SEED), publicKey.toBuffer()], program.programId);
 
-          const userAccount: any = await program.account.user.fetch(profilePda);
+        const userAccount: any = await program.account.user.fetch(profilePda);
 
-          if (userAccount) {
-            setInitialized(true);
-            setUser({
-              ...userAccount,
-              lastDeposited: userAccount.lastDeposited.toString(),
-              totalAssets: userAccount.totalAssets.toString(),
-              totalInvestments: userAccount.totalInvestments.toString(),
-              totalReturns: userAccount.totalReturns.toString(),
-            });
+        if (userAccount) {
+          setInitialized(true);
+          setUser({
+            ...userAccount,
+            lastDeposited: userAccount.lastDeposited.toString(),
+            totalAssets: userAccount.totalAssets.toString(),
+            totalInvestments: userAccount.totalInvestments.toString(),
+            totalReturns: userAccount.totalReturns.toString(),
+          });
 
-            const investmentsA = await program.account.investment.all();
-            const updatedInvestments = addAPY(investmentsA);
-            setInvestments(updatedInvestments);
+          const investmentsA = await program.account.investment.all();
+          const updatedInvestments = addAPY(investmentsA);
+          setInvestments(updatedInvestments);
 
-            const userTickets: any = await program.account.ticket.all();
-            const currentUserTickets = userTickets.filter((each: any) => each.account.authority.toString() === anchorWallet?.publicKey.toString());
-            setTickets(userTickets);
+          const userTickets: any = await program.account.ticket.all();
+          const currentUserTickets = userTickets.filter((each: any) => each.account.authority.toString() === anchorWallet?.publicKey.toString());
+          setTickets(userTickets);
 
-            const userInvestments = findMatches(currentUserTickets, updatedInvestments);
-            setUserHoldings(userInvestments);
-          } else {
-            setInitialized(false);
-          }
-        } catch (error) {
+          const userInvestments = findMatches(currentUserTickets, updatedInvestments);
+          setUserHoldings(userInvestments);
+        } else {
           setInitialized(false);
-          setInvestments([]);
-        } finally {
-          setLoading(false);
         }
-      } else {
+      } catch (error) {
+        setInitialized(false);
+        setInvestments([]);
+      } finally {
         setLoading(false);
       }
-    };
+    } else {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     findUserAccount();
   }, [publicKey, program, transactionPending]);
 
@@ -126,7 +126,7 @@ export default function useInvestments() {
           .createInvestment(amount, investmentType, Number(duration), category)
           .accounts({ user: userPda, investment: investmentPda, authority: publicKey, systemProgram: SystemProgram.programId })
           .rpc();
-
+        findUserAccount();
         setOpenInvestmentDialog(false);
         await confirmTx(txHash, connection);
         setNewInvestment(DEFAULT_INVESTMENT);
@@ -163,6 +163,7 @@ export default function useInvestments() {
           .buyInvestment(investment.account.id, amount)
           .accounts({ investment: investmentPda, ticket: ticketPda, investmentBuyer: publicKey, user: userPda, systemProgram: SystemProgram.programId })
           .rpc();
+        findUserAccount();
 
         await confirmTx(txHash, connection);
         toast.success('Successfully purchased investment');
@@ -174,10 +175,6 @@ export default function useInvestments() {
     }
   };
 
-  // { name: 'investment', isMut: true, isSigner: false },
-  // { name: 'ticket', isMut: false, isSigner: false },
-  // { name: 'authority', isMut: true, isSigner: true },
-  // { name: 'systemProgram', isMut: false, isSigner: false },
   const claimInvestmentFunds = async (ticket: any, investment: any) => {
     if (program && publicKey) {
       try {
@@ -200,6 +197,7 @@ export default function useInvestments() {
             systemProgram: SystemProgram.programId,
           })
           .rpc();
+        findUserAccount();
         await confirmTx(txHash, connection);
         toast.success('Investment successfully claimed!');
       } catch (error: any) {
