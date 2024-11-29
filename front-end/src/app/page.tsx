@@ -1,6 +1,5 @@
 'use client';
 import { BriefcaseBusiness, ChartCandlestick, Tickets } from 'lucide-react';
-import useInvestments from '@/hooks/useInvestment';
 import InvestmentCard from '@/components/investment-card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -8,13 +7,15 @@ import { DashboardLoading } from '@/components/loading';
 import EmptyData from '@/components/ui/empty-placeholder';
 import IndividualInvestments from '@/components/investments';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { AppContext } from './providers/appContext';
+import { useContext } from 'react';
 
 export default function Home() {
-  const { initialized, user, investments, setOpenInvestmentDialog, openInvestmentDialog, transactionPending, loading } = useInvestments();
+  const { initialized, user, investments, setOpenInvestmentDialog, openInvestmentDialog, loadingInvestment, loading } = useContext(AppContext);
 
   const portfolio = initialized && user ? Number(user.totalReturns) + Number(user.totalInvestments) : 0;
 
-  if (transactionPending || loading) {
+  if (loading) {
     return <DashboardLoading />;
   }
 

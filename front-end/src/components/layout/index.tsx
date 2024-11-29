@@ -1,19 +1,19 @@
 'use client';
 
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useContext, useState } from 'react';
 import Image from 'next/image';
 import { HOME_URL, INVESTMENTS, PORTFOLIO_URL, REWARD_AND_EARNINGS_URL, TRANSACTIONS_URL } from '@/config/routes';
-import { ArrowRightLeft, BriefcaseBusiness, ChartCandlestick, Coins, LayoutDashboard, Loader, Menu, X } from 'lucide-react';
+import { ArrowRightLeft, BadgeDollarSign, BriefcaseBusiness, ChartCandlestick, Coins, LayoutDashboard, Loader, Menu, X } from 'lucide-react';
 import { cn } from '@/libs/utils';
 import { usePathname } from 'next/navigation';
 import ConnectButton from '../ConnectedButton';
 import { Button } from '../ui/button';
-import useInvestments from '@/hooks/useInvestment';
+import { AppContext } from '@/app/providers/appContext';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const [showNav, setShowNav] = useState(false);
   const pathname = usePathname();
-  const { initializeUser, transactionPending, connected, initialized, loading } = useInvestments();
+  const { loading, transactionPending, connected, initialized, initializeUser } = useContext(AppContext);
 
   return (
     <div className="p-4 w-full">
@@ -105,6 +105,12 @@ export const sidebarItems = [
     icon: <BriefcaseBusiness size={20} />,
     href: PORTFOLIO_URL,
     isComingSoon: false,
+  },
+  {
+    title: 'Martket Place',
+    icon: <BadgeDollarSign size={20} />,
+    href: REWARD_AND_EARNINGS_URL,
+    isComingSoon: true,
   },
   {
     title: 'Transactions',

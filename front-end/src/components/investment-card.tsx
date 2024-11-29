@@ -1,17 +1,17 @@
 import { calculateAPY, cn } from '@/libs/utils';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Button } from './ui/button';
 import { ChevronDown, ChevronUp, ExternalLink, Plus } from 'lucide-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SOL_RATE } from '@/libs/constants';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import useInvestments from '@/hooks/useInvestment';
+import { AppContext } from '@/app/providers/appContext';
 
 export default function InvestmentCard({ each, hasClaim }: { each: any; hasClaim?: boolean }) {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(true);
-  const { buyInvestment, transactionPending, claimInvestmentFunds, tickets } = useInvestments();
+  const { buyInvestment, claimInvestmentFunds, tickets, loadingBuyInvestment, loadingClaimInvestment } = useContext(AppContext);
 
   const totalAssets = Number(each.account.totalAssets.toString()) / LAMPORTS_PER_SOL;
   const totalAssetsInUSD = (Number(each.account.totalAssets.toString()) / LAMPORTS_PER_SOL) * SOL_RATE;
@@ -122,7 +122,7 @@ export default function InvestmentCard({ each, hasClaim }: { each: any; hasClaim
                     <Button variant="outline" onClick={() => setOpenDialog(false)} className="lg:mt-0 mt-4">
                       Cancel
                     </Button>
-                    <Button onClick={() => handleBuyInvestment(each, investmentReward)} pending={transactionPending} pendingText="Please wait...">
+                    <Button onClick={() => handleBuyInvestment(each, investmentReward)} pending={loadingBuyInvestment} pendingText="Please wait...">
                       Proceed
                     </Button>
                   </DialogFooter>
@@ -131,7 +131,7 @@ export default function InvestmentCard({ each, hasClaim }: { each: any; hasClaim
             )}
 
             {hasClaim && (
-              <Button className="flex w-full" onClick={handleClaim} pending={transactionPending} pendingText="Please wait...">
+              <Button className="flex w-full" onClick={handleClaim} pending={loadingClaimInvestment} pendingText="Please wait...">
                 <div className="flex space-x-2 items-center w-full h-12">
                   <ExternalLink size={20} /> <p>Claim</p>
                 </div>

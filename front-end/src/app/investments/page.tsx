@@ -3,14 +3,14 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import CreateInvestments from '@/components/create-investments';
-import useInvestments from '@/hooks/useInvestment';
 import InvestmentCard from '@/components/investment-card';
 import { InvestmentLoading } from '@/components/loading';
-import React from 'react';
+import React, { useContext } from 'react';
 import EmptyData from '@/components/ui/empty-placeholder';
+import { AppContext } from '../providers/appContext';
 
 export default function Investments() {
-  const { investments, loading, setOpenInvestmentDialog, openInvestmentDialog, transactionPending } = useInvestments();
+  const { investments, loading, setOpenInvestmentDialog, openInvestmentDialog, transactionPending, connected, initialized } = useContext(AppContext);
 
   return (
     <div className="space-y-6">
@@ -19,7 +19,7 @@ export default function Investments() {
 
         <Dialog open={openInvestmentDialog} onOpenChange={setOpenInvestmentDialog}>
           <DialogTrigger asChild>
-            <Button>Add New Investment</Button>
+            <Button disabled={!connected || !initialized}>Add New Investment</Button>
           </DialogTrigger>
           <DialogContent className="lg:max-w-[50%] max-h-[90vh] overflow-y-auto">
             <DialogHeader>

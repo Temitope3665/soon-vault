@@ -1,13 +1,14 @@
+'use client';
 import * as anchor from '@project-serum/anchor';
 import { DEFAULT_INVESTMENT, INVESTMENT_SEED, PROGRAM_ID, TICKET_SEED, USER_SEED } from '@/libs/constants';
 import { IDL as investmentIDL } from '@/libs/idl';
 import { LAMPORTS_PER_SOL, SystemProgram } from '@solana/web3.js';
-import { bs58, utf8 } from '@project-serum/anchor/dist/cjs/utils/bytes';
+import { utf8 } from '@project-serum/anchor/dist/cjs/utils/bytes';
 import { findProgramAddressSync } from '@project-serum/anchor/dist/cjs/utils/pubkey';
 import { useWallet, useConnection, useAnchorWallet } from '@solana/wallet-adapter-react';
-import { useEffect, useMemo, useState } from 'react';
 import { addAPY, confirmTx, findMatches } from '@/libs/utils';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 
 export interface INewInvestment {
   investmentAmount: string;
@@ -16,7 +17,9 @@ export interface INewInvestment {
   category: string;
 }
 
-export default function useInvestments() {
+export const AppContext = createContext<any>({});
+
+export default function AppProvider({ children }: { children: React.ReactNode }) {
   const { connection } = useConnection();
   const { publicKey, connected } = useWallet();
   const anchorWallet = useAnchorWallet();
@@ -27,6 +30,11 @@ export default function useInvestments() {
   const [investments, setInvestments] = useState<any>([]);
   const [tickets, setTickets] = useState<any>([]);
   const [loading, setLoading] = useState(true);
+
+  const [loadingInvestment, setLoadingInvestment] = useState(false);
+  const [loadingBuyInvestment, setLoadingBuyInvestment] = useState(false);
+  const [loadingClaimInvestment, setLoadingClaimInvestment] = useState(false);
+
   const [transactionPending, setTransactionPending] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [userHoldings, setUserHoldings] = useState<any[]>([]);
@@ -82,7 +90,7 @@ export default function useInvestments() {
 
   useEffect(() => {
     findUserAccount();
-  }, [publicKey, program, transactionPending]);
+  }, [publicKey, program]);
 
   const initializeUser = async () => {
     if (program && publicKey) {
@@ -111,7 +119,7 @@ export default function useInvestments() {
   const createInvestment = async () => {
     if (program && publicKey) {
       try {
-        setTransactionPending(true);
+        setLoadingInvestment(true);
         const [userPda, profileBump] = findProgramAddressSync([utf8.encode(USER_SEED), publicKey.toBuffer()], program.programId);
 
         const [investmentPda, investmentBump] = findProgramAddressSync(
@@ -126,15 +134,15 @@ export default function useInvestments() {
           .createInvestment(amount, investmentType, Number(duration), category)
           .accounts({ user: userPda, investment: investmentPda, authority: publicKey, systemProgram: SystemProgram.programId })
           .rpc();
-        findUserAccount();
-        setOpenInvestmentDialog(false);
         await confirmTx(txHash, connection);
+        await findUserAccount();
+        setOpenInvestmentDialog(false);
         setNewInvestment(DEFAULT_INVESTMENT);
         toast.success('Successfully created an investment');
       } catch (error: any) {
         toast.error(error.toString());
       } finally {
-        setTransactionPending(false);
+        setLoadingInvestment(false);
       }
     }
   };
@@ -142,7 +150,7 @@ export default function useInvestments() {
   const buyInvestment = async (investment: any, futureValue: number) => {
     if (program && publicKey) {
       try {
-        setTransactionPending(true);
+        setLoadingBuyInvestment(true);
         const [userPda, profileBump] = findProgramAddressSync([utf8.encode(USER_SEED), publicKey.toBuffer()], program.programId);
         const [ticketPda, ticketBump] = findProgramAddressSync(
           [
@@ -163,14 +171,14 @@ export default function useInvestments() {
           .buyInvestment(investment.account.id, amount)
           .accounts({ investment: investmentPda, ticket: ticketPda, investmentBuyer: publicKey, user: userPda, systemProgram: SystemProgram.programId })
           .rpc();
-        findUserAccount();
+        await findUserAccount();
 
         await confirmTx(txHash, connection);
         toast.success('Successfully purchased investment');
       } catch (error: any) {
         toast.error(error.toString());
       } finally {
-        setTransactionPending(false);
+        setLoadingBuyInvestment(false);
       }
     }
   };
@@ -178,8 +186,7 @@ export default function useInvestments() {
   const claimInvestmentFunds = async (ticket: any, investment: any) => {
     if (program && publicKey) {
       try {
-        setTransactionPending(true);
-        const [userPda, profileBump] = findProgramAddressSync([utf8.encode(USER_SEED), publicKey.toBuffer()], program.programId);
+        setLoadingClaimInvestment(true);
         const [investmentPda, investmentBump] = findProgramAddressSync(
           [utf8.encode(INVESTMENT_SEED), new anchor.BN(investment.account.id).toArrayLike(Buffer, 'le', 4)],
           program.programId
@@ -197,18 +204,18 @@ export default function useInvestments() {
             systemProgram: SystemProgram.programId,
           })
           .rpc();
-        findUserAccount();
+        await findUserAccount();
         await confirmTx(txHash, connection);
         toast.success('Investment successfully claimed!');
       } catch (error: any) {
         toast.error(error.toString());
       } finally {
-        setTransactionPending(false);
+        setLoadingClaimInvestment(false);
       }
     }
   };
 
-  return {
+  const value: any = {
     initializeUser,
     transactionPending,
     createInvestment,
@@ -225,5 +232,14 @@ export default function useInvestments() {
     tickets,
     claimInvestmentFunds,
     userHoldings,
+    loadingInvestment,
+    loadingBuyInvestment,
+    loadingClaimInvestment,
   };
+
+  return (
+    <AppContext.Provider value={value}>
+      <div>{children}</div>
+    </AppContext.Provider>
+  );
 }

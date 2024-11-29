@@ -2,13 +2,13 @@
 import InvestmentCard from '@/components/investment-card';
 import { DashboardLoading } from '@/components/loading';
 import EmptyData from '@/components/ui/empty-placeholder';
-import useInvestments from '@/hooks/useInvestment';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { BriefcaseBusiness, ChartCandlestick, Tickets } from 'lucide-react';
-import React from 'react';
+import React, { useContext } from 'react';
+import { AppContext } from '../providers/appContext';
 
 export default function Portfolio() {
-  const { initialized, user, userHoldings, transactionPending, loading } = useInvestments();
+  const { initialized, user, userHoldings, transactionPending, loading } = useContext(AppContext);
 
   const portfolio = initialized && user ? Number(user.totalReturns) + Number(user.totalInvestments) : 0;
 

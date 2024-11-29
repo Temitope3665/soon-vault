@@ -2,18 +2,18 @@
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DEFAULT_INVESTMENT, categories, riskLevel } from '@/libs/constants';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { cn, findMatchingInvestments, wait } from '@/libs/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import useInvestments, { INewInvestment } from '@/hooks/useInvestment';
 import InvestmentCard from './investment-card';
+import { AppContext, INewInvestment } from '@/app/providers/appContext';
 
 export default function IndividualInvestments() {
   const [newInvestment, setNewInvestment] = useState<INewInvestment>(DEFAULT_INVESTMENT);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedLevel, setSelectedLevel] = useState<string>('');
-  const { initialized, investments } = useInvestments();
+  const { initialized, investments } = useContext(AppContext);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [generatedInvestment, setGeneratedInvestment] = useState<any>(null);
 

@@ -2,21 +2,21 @@
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { categories, riskLevel } from '@/libs/constants';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { cn } from '@/libs/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import useInvestments from '@/hooks/useInvestment';
+import { AppContext } from '@/app/providers/appContext';
 
 export default function CreateInvestments() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedLevel, setSelectedLevel] = useState<string>('');
-  const { transactionPending, initialized, createInvestment, setNewInvestment, newInvestment } = useInvestments();
+  const { initialized, createInvestment, setNewInvestment, newInvestment, loadingInvestment } = useContext(AppContext);
 
   const handleSelectCategory = (value: string) => {
     if (initialized) {
       setSelectedCategory(value);
-      setNewInvestment((prev) => ({ ...prev, investmentType: value }));
+      setNewInvestment((prev: any) => ({ ...prev, investmentType: value }));
     }
   };
 
@@ -30,7 +30,7 @@ export default function CreateInvestments() {
             <Select
               disabled={!initialized}
               defaultValue={newInvestment.category}
-              onValueChange={(value) => setNewInvestment((prev) => ({ ...prev, investmentType: value }))}
+              onValueChange={(value) => setNewInvestment((prev: any) => ({ ...prev, investmentType: value }))}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select a type" />
@@ -92,7 +92,7 @@ export default function CreateInvestments() {
                   className="h-12"
                   disabled={!initialized}
                   value={newInvestment.investmentAmount}
-                  onChange={({ target }) => setNewInvestment((prev) => ({ ...prev, investmentAmount: target.value }))}
+                  onChange={({ target }) => setNewInvestment((prev: any) => ({ ...prev, investmentAmount: target.value }))}
                 />
                 <p className="text-sm font-light absolute top-[45%] right-10 text-grey200">SOON</p>
               </div>
@@ -102,7 +102,7 @@ export default function CreateInvestments() {
                 <Select
                   disabled={!initialized}
                   defaultValue={newInvestment.duration}
-                  onValueChange={(value) => setNewInvestment((prev) => ({ ...prev, duration: value }))}
+                  onValueChange={(value) => setNewInvestment((prev: any) => ({ ...prev, duration: value }))}
                 >
                   <SelectTrigger className="w-[180px] h-12">
                     <SelectValue placeholder="Select duration" />
@@ -122,7 +122,7 @@ export default function CreateInvestments() {
               disabled={
                 (!initialized && !newInvestment.category) || !newInvestment.duration || !newInvestment.investmentAmount || !newInvestment.investmentType
               }
-              pending={transactionPending}
+              pending={loadingInvestment}
               pendingText="Creating Investment..."
               onClick={createInvestment}
             >
